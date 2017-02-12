@@ -42,7 +42,7 @@ class Authentication extends MY_Controller
     /**
      * User Registration
      *
-     * @access    /index.php/member/register
+     * @access    /index.php/authentication/register
      */
     public function register()
     {
@@ -106,7 +106,7 @@ class Authentication extends MY_Controller
     /**
      * Confirm account
      *
-     * @access    /index.php/member/confirm/{EMAIL}
+     * @access    /index.php/authentication/confirm/{EMAIL}
      */
     public function confirm($email)
     {
@@ -218,7 +218,7 @@ class Authentication extends MY_Controller
      *
      * @param boolean $redirect
      *
-     * @access    /index.php/member/logout
+     * @access    /index.php/authentication/logout
      */
     public function logout($redirect = true)
     {
@@ -242,7 +242,7 @@ class Authentication extends MY_Controller
     /**
      * User Forgot Pass
      *
-     * @access    /index.php/member/forgot
+     * @access    /index.php/authentication/forgot
      */
     public function forgot()
     {
@@ -289,7 +289,7 @@ class Authentication extends MY_Controller
     /**
      * Re-send confirmation code
      *
-     * @access    /index.php/member/resend
+     * @access    /index.php/authentication/resend
      */
     public function resend()
     {
@@ -340,7 +340,7 @@ class Authentication extends MY_Controller
     /**
      * Reset Password
      *
-     * @access    /index.php/member/reset
+     * @access    /index.php/authentication/reset
      */
     public function reset($code, $user_id)
     {
@@ -382,7 +382,7 @@ class Authentication extends MY_Controller
     /**
      * Delete/Deactivate account
      *
-     * @access    /index.php/member/deactivate
+     * @access    /index.php/authentication/deactivate
      */
     public function deactivate()
     {
