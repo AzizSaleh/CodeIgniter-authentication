@@ -33,6 +33,8 @@ echo form_open('authentication/register');
         <input type="checkbox" <?=set_checkbox('remember_me', '1');?> name="remember_me" id="remember_me" value="1" /> Check to remember
         <?php endif;?>
     </div>
+    <?php echo form_error('g-recaptcha-response'); ?>
+    <?php echo set_captcha('<div class="captcha">', '</div>');?>
     <div class="links">     
         <div class="link">
             <a href="<?=site_url('authentication/login');?>">Login</a>

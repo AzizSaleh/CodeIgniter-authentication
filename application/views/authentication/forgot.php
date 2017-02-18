@@ -14,6 +14,8 @@ echo form_open('authentication/forgot');
     <div class="action">
         <input type="submit" value="Email me reset link" />
     </div>
+    <?php echo form_error('g-recaptcha-response'); ?>
+    <?php echo set_captcha('<div class="captcha">', '</div>');?>
     <div class="links">     
         <div class="link">
             <a href="<?=site_url('authentication/register');?>">Register</a>

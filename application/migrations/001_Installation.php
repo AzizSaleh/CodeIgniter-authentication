@@ -29,6 +29,27 @@ class Migration_Installation extends CI_Migration
      */
     public function up()
     {
+        if ($_SERVER['argc'] < 5) {
+            echo 'Usage: php index.php migrate/index admin_username adminemail%gmail.com admin_password.';
+            echo ' Please note the email, use % for @.' . PHP_EOL;
+            exit(1);
+        }
+
+        $username = $_SERVER['argv'][2];
+        $email    = str_replace('%', '@', $_SERVER['argv'][3]);
+        $password = $_SERVER['argv'][4];
+
+        // Check email format
+        if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            echo 'Invalid email: ' . $email;
+            exit(1);
+        }
+
+        if (strpos($username, '@') !== false) {
+            echo 'Username can not contain @';
+            exit(1);
+        }
+
         $this->db->query("CREATE TABLE `users` (
           `id` bigint(20) UNSIGNED NOT NULL,
           `user_name` varchar(50) NOT NULL,
@@ -62,6 +83,20 @@ class Migration_Installation extends CI_Migration
 
         $this->db->query("ALTER TABLE `user_sessions`
         ADD PRIMARY KEY (`user_id`,`session_id`);");
+
+        // Add admin user
+        $this->load->config('authentication', true);
+        $configs = $this->config->config['authentication'];
+
+        $salt = uniqid('', true);
+        $password = password_hash(
+            $password . $configs['hash'] . 
+            $salt, PASSWORD_BCRYPT
+        );
+        $this->db->query("INSERT INTO `users` 
+          (`id`, `user_name`, `user_email`, `user_pass`, `user_salt`, `user_status`, `reset_pass`, `user_confirmed`, `confirm_code`, `created_at`, `created_ip`, `confirmed_at`, `updated_at`) VALUES
+          (1, ?, ?, ?, ?, 'active', NULL, 'yes', NULL, NOW(), '::1', NOW(), NULL)",
+          array($username, $email, $password, $salt));
     }
 
     /**

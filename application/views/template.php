@@ -36,7 +36,7 @@ body {
     background-color:#dddddd;
 }
 .container .danger {
-    background-color:#ba1e36;   
+    background-color:#ba1e36;
 }
 .container form {
     margin-bottom:0;
@@ -45,12 +45,35 @@ body {
     font-size: 1.8em;
     border-bottom: 1px solid #666;
 }
+
+.container .header .options {
+    float:right;
+}
+
+.container .header .options input[type=textbox] {
+    display: inline-block;
+    font-size: 10px;
+    height:20px;
+}
+
+.container .header .options input[type=submit] {
+    display: inline-block;
+    font-size: 10px;
+    height:22px;
+}
+
+.container .header .options select {
+    font-size: 11px;
+    height:20px;
+    margin-top:5px;
+}
+
 .container .input {
     padding-top: 15px;
     width: 546px;
     clear: both;
 }
-.container input[type=text],.container input[type=password] {
+.container input[type=text],.container input[type=password],.container .input select {
     width: 60%;
     float:right;
     margin-right: 20px;
@@ -90,11 +113,55 @@ body {
     font-size: .7em;
     width: 100%;
 }
+.container .captcha {
+    clear:both;
+    left: 25%;
+    position: relative;
+}
+.container table {
+    font-family: "Lucida Sans Unicode","Lucida Grande",sans-serif;
+    font-size: 12px;
+    background: #fff none repeat scroll 0 0;
+}
+.container th {
+    border-bottom:2px solid #000;
+}
+.container .actions, .container .actions a {
+    text-align: center;
+    cursor: pointer;
+    color: #2F4F4F;
+    font-weight: bold;
+}
+.container .actions a {
+    text-decoration: none;
+}
+.container .actions a:hover {
+    text-decoration: underline;
+}
+.container .pagination {
+    margin-top:10px;
+    text-align: center;
+}
+.container .pagination strong, .container .pagination a, .container .numbers {
+    font-family: Tahoma, Geneva, sans-serif;
+    font-size: 10px;
+    color: #292929;
+    text-decoration: none;
+    background: #e3e3e3;
+    padding: 4px 7px;
+}
+.container .pagination a {
+    border: 1px solid #708090;
+}
 </style>
 </head>
 <body>
 <div class="container">
-    <?php if (isset($message_main)): ?>
+    <?php
+    if (!isset($message_main)):
+        $message_main = $this->session->flashdata('last_action');
+    endif;
+    if (isset($message_main)): ?>
     <div class="main_error"><?=$message_main;?></div>
     <?php endif;?>
 

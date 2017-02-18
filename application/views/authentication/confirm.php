@@ -18,4 +18,6 @@ echo form_open('authentication/confirm/' . urlencode($email));
         <input type="checkbox" <?=set_checkbox('remember_me', '1');?> name="remember_me" id="remember_me" value="1" /> Check to remember
         <?php endif;?>
     </div>
+    <?php echo form_error('g-recaptcha-response'); ?>
+    <?php echo set_captcha('<div class="captcha">', '</div>');?>
 </form>

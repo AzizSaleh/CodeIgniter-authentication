@@ -36,6 +36,7 @@ class MY_Controller extends CI_Controller
 
         $this->load->config('authentication', true);
         $this->configs = $this->config->config['authentication'];
+        $this->load->library('session');
 
         $this->load->model('model_users');
 

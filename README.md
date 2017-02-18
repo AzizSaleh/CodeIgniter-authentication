@@ -22,13 +22,16 @@ This plug and play - just copy/paste entire directory into your codeigniter dire
 
 6. Account de-activate/deletion (if enabled)
 
+7. Admin (User #1) user management page (Edit/Delete)
+
 
 # Installation
 
 1. Update your database configs: `application/configs/database.php`:
 2. Update your email configs: `application/configs/email.php`:
-3. Install the required database via migration: `php index.php migrate/index`
+3. Install the required database via migration: `php index.php migrate/index username email%email.com pasword`. Please note that the default codeigniter doesn't allow `@` character so replace it with the `%` character and the migration will automatically convert it.
 4. You can now access the system by going to: `http://application/index.php/authentication/register`
+5. Login as an admin.
 
 # How to use
 

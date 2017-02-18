@@ -23,7 +23,9 @@ echo form_open('authentication/login');
         <input type="checkbox" <?=set_checkbox('remember_me', '1');?> name="remember_me" id="remember_me" value="1" /> Check to remember
         <?php endif;?>
     </div>
-    <div class="links">     
+    <?php echo form_error('g-recaptcha-response'); ?>
+    <?php echo set_captcha('<div class="captcha">', '</div>');?>
+    <div class="links">
         <div class="link">
             <a href="<?=site_url('authentication/register');?>">Register</a>
         </div>

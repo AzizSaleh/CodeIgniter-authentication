@@ -43,8 +43,8 @@ class Model_Users extends MY_Model
         $this->db->from($this->table);
         $this->db->where('user_name', $login);
         $this->db->or_where('user_email', $login);
-        $res = $this->db->get()->result();
-        return !empty($res) ? $res[0] : false;
+        $res = $this->db->get()->row();
+        return !empty($res) ? $res : false;
     }
 
     /**
@@ -60,8 +60,8 @@ class Model_Users extends MY_Model
         $this->db->select($field);
         $this->db->from($this->table);
         $this->db->where($field, $value);
-        $res = $this->db->get()->result();
-        return !empty($res) ? $res[0] : false;
+        $res = $this->db->get()->row();
+        return !empty($res) ? $res : false;
     }
 
     /**
@@ -137,9 +137,9 @@ class Model_Users extends MY_Model
         $this->db->where('confirm_code', $code);
         $this->db->where('user_email', $email);
         $this->db->where('user_confirmed', 'no');
-        $res = $this->db->get()->result();
+        $res = $this->db->get()->row();
 
-        if (!isset($res[0])) {
+        if (!isset($res)) {
             return false;
         }
 
@@ -148,9 +148,9 @@ class Model_Users extends MY_Model
         $this->db->query("UPDATE {$this->table} 
         SET user_status = 'active',user_confirmed = 'yes',
         confirm_code = NULL, confirmed_at = ?
-        WHERE id = ? LIMIT 1", array($date, $res[0]->id));
+        WHERE id = ? LIMIT 1", array($date, $res->id));
         
-        return $res[0]->id;
+        return $res->id;
     }
 
     /**
@@ -171,9 +171,9 @@ class Model_Users extends MY_Model
             $this->db->select('id, user_name, user_email, reset_pass');
             $this->db->from($this->table);
             $this->db->where('reset_pass', $reset);
-            $res = $this->db->get()->result();
+            $res = $this->db->get()->row();
 
-            return $res[0];
+            return !empty($res) ? $res : false;
         }
 
         return false;
@@ -195,9 +195,9 @@ class Model_Users extends MY_Model
         $this->db->where('reset_pass', $code);
         $this->db->where('id', $user_id);
         $this->db->where('user_status', 'active');
-        $res = $this->db->get()->result();
+        $res = $this->db->get()->row();
 
-        if (!empty($res[0])) {
+        if (!empty($res)) {
             $new_pass   = uniqid('', true);
             $user_salt  = uniqid('', true);
             $password   = password_hash($new_pass . $configs['hash'] . $user_salt, PASSWORD_BCRYPT);
@@ -208,7 +208,7 @@ class Model_Users extends MY_Model
                 WHERE id = ? LIMIT 1", array($password, date("Y-m-d H:i:s"), $user_salt, $user_id));
 
             if ($this->db->affected_rows() > 0) {
-                return array('pass' => $new_pass, 'user' => $res[0]);
+                return array('pass' => $new_pass, 'user' => $res);
             }
         }
 
@@ -243,10 +243,10 @@ class Model_Users extends MY_Model
         $this->db->where('user_sessions.session_id', $session_id);
         $this->db->where('users.user_status', 'active');
 
-        $res = $this->db->get()->result();
+        $res = $this->db->get()->row();
 
-        if (!empty($res[0])) {
-            return $res[0];
+        if (!empty($res)) {
+            return $res;
         }
 
         return false;
@@ -323,12 +323,71 @@ class Model_Users extends MY_Model
         $login = $this->db->escape($login);
         $this->db->where("(user_name = $login OR user_email = $login)");
 
-        $res = $this->db->get()->result();
+        $res = $this->db->get()->row();
 
-        if (!empty($res[0])) {
-            return $res[0];
+        if (!empty($res)) {
+            return $res;
         }
 
         return false;
+    }
+
+    /**
+     * Get all users (except admin)
+     *
+     * @param int $limit
+     * @param int $offset
+     * @param string $offset
+     * @param string $search
+     *
+     * @return array
+     */
+    public function get_users($limit, $offset, $status = '', $search = '')
+    {
+        $this->db->select('SQL_CALC_FOUND_ROWS *', false);
+        $this->db->from($this->table);
+        $this->db->where('id > 1');
+        if (!empty($status) && in_array($status, array('active', 'disabled', 'confirm'))) {
+            $this->db->where('user_status', $status);
+        }
+        if (!empty($search)) {
+            $search = $this->db->escape_like_str($search);
+            $this->db->where("(
+                id = '{$search}'
+                OR
+                user_name LIKE '%{$search}%'
+                OR
+                user_email LIKE '%{$search}%')");
+        }
+        $this->db->limit($limit, $offset);
+        return $this->db->get()->result();
+    }
+
+    /**
+     * Get user count from above query
+     *
+     * @return int
+     */
+    public function get_count()
+    {
+        $res = $this->db->query("SELECT FOUND_ROWS() AS user_count");
+        $res = $res->row();
+
+        return empty($res) ? 0 : $res->user_count;
+    }
+
+    /**
+     * Get user
+     *
+    * @param int $user_id
+    *
+    * @return array|boolean
+    */
+    public function get_user($user_id)
+    {
+        $res = $this->db->query("SELECT * FROM {$this->table} WHERE id = ?", array($user_id));
+        $res = $res->row();
+
+        return empty($res) ? false : $res;   
     }
 }
